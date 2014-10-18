@@ -2,6 +2,7 @@ CREATE TABLE `link` (
   `id_link` int(11) NOT NULL AUTO_INCREMENT,
   `uri` varchar(2048) NOT NULL,
   `short` varchar(256) DEFAULT NULL,
+  `meta` varchar(2048) DEFAULT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_link`)
 );

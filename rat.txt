@@ -51,3 +51,12 @@ Select all of the links for a particular username:
 	LEFT JOIN userstack AS us ON s.id_stack = us.id_stack
 	LEFT JOIN user AS u ON u.id_user = us.id_user
 	WHERE u.name='krakissi';
+
+
+User Experience
+---------------
+
+	On the homepage, the user should see a list of all their stacks
+(perm levels 0, 1, and 2) with a short sampling (maybe 3) of the newest
+links pushed onto that stack. Another list should show the newest links
+from all stacks (top 10 or so).
