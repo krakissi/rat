@@ -1,0 +1,41 @@
+So basically, there's a table of users that map to rat-specific ID ints.
+Another table holds stack objects, with a weak entity tying the users to
+stacks with a permission level.
+	0 - owner
+	1 - contributor
+	2 - subscriber
+
+Stacks are comprised of Link objects, so a weak entity connects Links to
+Stacks.
+
+Link
+	id_link - integer
+	uri - the full link to the original document
+	short - a shortened version of the link, if available, as from a URL
+		shortening service. (derpy.me, etc.)
+	date - datetime when the link was added.
+
+stacklink
+	id_stack
+	id_link
+	addedby - integer, user id who added this element to the list
+
+Stack
+	id_stack - integer
+	creator - integer, rat ID int of the original creator. May no longer
+		be the owner of this stack.
+	name - pretty, user defined named. Only used for presentation.
+	date - datetime when the stack was created.
+
+userstack
+	id_user
+	id_stack
+	permission - 0, 1, or 2; defines access level.
+		0 - owner
+		1 - contributor
+		2 - subscriber
+
+User
+	ID - integer, unique to rat module, not tied to kws accounts IDs
+	name - user's name
+	date - datetime user first started using rat.

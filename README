@@ -1,4 +1,13 @@
 krakrat
 mperron (2014)
 
-A system for storing links you want to read later.
+A system for storing links you want to read later. Build a stack of
+links and pop them off as soon as you're done with them...or don't, and
+become a krakrat!
+
+This module requires MySQL. As a super user (e.g. root) in MySQL, create
+the database and grant kraknet@localhost full permissions to that
+database.
+
+	create database rat;
+	grant all on rat.* to 'kraknet'@'localhost';
