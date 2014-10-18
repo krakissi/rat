@@ -1,6 +1,6 @@
-So basically, there's a table of users that map to rat-specific ID ints.
-Another table holds stack objects, with a weak entity tying the users to
-stacks with a permission level.
+There's a table of users that map to rat-specific ID ints. Another table
+holds stack objects, with a weak entity tying the users to stacks with a
+permission level.
 	0 - owner
 	1 - contributor
 	2 - subscriber
@@ -36,6 +36,18 @@ userstack
 		2 - subscriber
 
 User
-	ID - integer, unique to rat module, not tied to kws accounts IDs
+	id_user - integer, unique to rat module, not tied to kws accounts IDs
 	name - user's name
 	date - datetime user first started using rat.
+
+Query Examples
+--------------
+
+Select all of the links for a particular username:
+	SELECT sl.id_stack, l.id_link, l.uri
+	FROM link AS l
+	LEFT JOIN stacklink AS sl ON l.id_link = sl.id_link
+	LEFT JOIN stack AS s ON sl.id_stack = s.id_stack
+	LEFT JOIN userstack AS us ON s.id_stack = us.id_stack
+	LEFT JOIN user AS u ON u.id_user = us.id_user
+	WHERE u.name='krakissi';

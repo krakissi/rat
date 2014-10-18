@@ -1,0 +1,35 @@
+CREATE TABLE `link` (
+  `id_link` int(11) NOT NULL AUTO_INCREMENT,
+  `uri` varchar(2048) NOT NULL,
+  `short` varchar(256) DEFAULT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_link`)
+);
+
+CREATE TABLE `stack` (
+  `id_stack` int(11) NOT NULL AUTO_INCREMENT,
+  `creator` int(11) NOT NULL,
+  `name` varchar(512) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_stack`)
+);
+
+CREATE TABLE `user` (
+  `id_user` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(256) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_user`),
+  UNIQUE KEY `name` (`name`)
+);
+
+CREATE TABLE `stacklink` (
+  `id_stack` int(11) NOT NULL,
+  `id_link` int(11) NOT NULL,
+  `addedby` int(11) NOT NULL
+);
+
+CREATE TABLE `userstack` (
+  `id_user` int(11) NOT NULL,
+  `id_stack` int(11) NOT NULL,
+  `permission` int(11) NOT NULL DEFAULT '0'
+);
