@@ -5,7 +5,7 @@ use DBI;
 
 my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
 my $user = $ENV{kraknet_user};
-my $perm = $ARGV[0];
+my $perm = $ARGV[0] // 0;
 
 if(length($user) == 0){
 	# Not logged in!
