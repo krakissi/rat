@@ -1,2 +1,4 @@
 # krakrat
 # mperron (2014)
+prep=sh/prep.pl
+stacks=sh/stacks.pl
