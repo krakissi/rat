@@ -29,12 +29,14 @@ print "<ul>\n";
 my $count = 0;
 while(my ($id, $name, $date, $creator) = $sth->fetchrow_array()){
 	my $cname = &creator_find($creator);
+
+	$name = KrakratCommon::escape_html($name);
 	print qq{\t<li><a href="stack.html?id=$id" title="Created by $cname ($date)">$name</a>\n};
 
 	# Display first three links
 	KrakratCommon::getlinks({id_stack => $id, limit => 3});
 
-	print qq{\t</table></li>\n};
+	print qq{\t</li>\n};
 	$count++;
 }
 print "</ul>\n";

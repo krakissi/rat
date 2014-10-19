@@ -101,6 +101,7 @@ if($has{owner}){
 }
 
 if($has{read}){
+	$name = KrakratCommon::escape_html($name);
 	print "<h2>$name</h2>\n";
 
 	# Dump out the links!

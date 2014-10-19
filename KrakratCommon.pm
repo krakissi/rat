@@ -40,8 +40,15 @@ use DBI;
 		while(my ($uri, $short, $meta, $date, $stack, $id_stack) = $sth->fetchrow_array()){
 			my $display = (length($meta) > 0) ? $meta : $uri;
 
+			$stack = &escape_html($stack);
+			$date = &escape_html($date);
+			$uri = &escape_link($uri);
+			$display = &escape_html($display);
+			my $short_uri = &escape_link($short);
+			$short = &escape_html($short);
+
 			print qq{\t\t<tr>} . ($stack ? qq{<td><a href="stack.html?id=$id_stack">$stack</a></td>} : "") . qq{<td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
-			print qq{<td><a href="$short">$short</a></td>} if(length($short));
+			print qq{<td><a href="$short_uri">$short</a></td>} if(length($short));
 			print qq{</tr>\n};
 			$count++;
 		}
@@ -81,3 +88,27 @@ use DBI;
 		return $dbh->prepare($sql);
 	}
 }
+
+# Escape quotes for quoted strings.
+sub escape_link {
+	my $link = shift;
+
+	return $link =~ s/"/&quot;/g if($link);
+}
+
+# Escape HTML for generic display.
+sub escape_html {
+	my $link = shift;
+
+	if($link){
+		$link =~ s/&/&amp;/g;
+		$link =~ s/</&lt;/g;
+		$link =~ s/>/&gt;/g;
+	}
+
+	return $link
+}
+
+
+# Returning a true value...perl pls.
+1
