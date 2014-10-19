@@ -54,14 +54,47 @@ if(length($user) > 0){
 	$sth->execute($user, $id_stack);
 	my ($perm) = $sth->fetchrow_array();
 
-	if(($perm == 0) || ($perm == 1)){
-		# Contributor or owner of this stack.
+	if($perm == 0){
+		# Owner of this stack (can change visibility permissions).
+		$has{read} = 1;
+		$has{write} = 1;
+		$has{owner} = 1;
+	} elsif($perm == 1){
+		# Contributor to this stack.
 		$has{read} = 1;
 		$has{write} = 1;
 	} elsif($perm == 2){
 		# Reader of this stack only.
 		$has{read} = 1;
 	}
+}
+
+# Edit controls, for adding new links.
+if($has{write}){
+	print qq{
+	<div>
+		<form action=action.pl method=post>
+			<input type=hidden name=op value=link_add>
+			<input type=hidden name=stack value="$id_stack">
+
+			<label for=link_add_uri>URL</label>
+			<input id=link_add_uri name=uri><br>
+
+			<label for=link_add_meta>Title</label>
+			<input id=link_add_meta name=meta><br>
+
+			<input type=submit value=Push>
+			<input type=reset value=Clear>
+		</form>
+	</div>};
+}
+
+if($has{owner}){
+	print qq{
+	<div>
+		<p>You are the owner of this stack.</p>
+	</div>
+	};
 }
 
 if($has{read}){
@@ -78,21 +111,23 @@ if($has{read}){
 	$sth->execute($id_stack);
 
 	# Dump out the links!
-	print "<ul>\n";
+	print "<table>\n";
 	my $count = 0;
 	while(my ($uri, $short, $meta, $date) = $sth->fetchrow_array()){
-		print qq{\t<li><a href="$uri" title="$meta" target=_blank>$uri</a>};
+		my $display = (length($meta) > 0) ? $meta : $uri;
+
+		print qq{\t<tr><td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
 
 		# Short variant of the link, if available.
 		if(length($short) > 0){
-			print qq{ - <a href="$short">$short</a>};
+			print qq{<td><a href="$short">$short</a></td>};
 		}
 
-		print qq{</a></li>\n};
+		print qq{</tr>\n};
 		$count++;
 	}
-	print "\t<li>This stack has no links.</li>\n" if(!$count);
-	print "</ul>\n";
+	print "</table>\n";
+	print "<h3>This stack has no links.</h3>\n" if(!$count);
 }
 
 exit 0
