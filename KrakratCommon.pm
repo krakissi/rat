@@ -37,10 +37,10 @@ use DBI;
 
 		print "\t<table>\n";
 		print "\t\t<thead><tr><th>Stack</th><th>Date</th><th>Link</th></tr></thead>\n" if($headings);
-		while(my ($uri, $short, $meta, $date, $stack) = $sth->fetchrow_array()){
+		while(my ($uri, $short, $meta, $date, $stack, $id_stack) = $sth->fetchrow_array()){
 			my $display = (length($meta) > 0) ? $meta : $uri;
 
-			print qq{\t\t<tr>} . ($stack ? "<td>$stack</td>" : "") . qq{<td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
+			print qq{\t\t<tr>} . ($stack ? qq{<td><a href="stack.html?id=$id_stack">$stack</a></td>} : "") . qq{<td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
 			print qq{<td><a href="$short">$short</a></td>} if(length($short));
 			print qq{</tr>\n};
 			$count++;
@@ -67,7 +67,7 @@ use DBI;
 		} else {
 			# No id_stack value means to select from all stacks the user can read.
 			$sql = qq{
-				SELECT l.uri, l.short, l.meta, l.date, s.name
+				SELECT l.uri, l.short, l.meta, l.date, s.name, s.id_stack
 				FROM link AS l
 				LEFT JOIN stacklink AS sl ON sl.id_link = l.id_link
 				LEFT JOIN stack AS s ON s.id_stack = sl.id_stack

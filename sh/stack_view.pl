@@ -55,7 +55,9 @@ if(length($user) > 0){
 	$sth->execute($user, $id_stack);
 	my ($perm) = $sth->fetchrow_array();
 
-	if($perm == 0){
+	if(length($perm) == 0){
+		# No additional permissions.
+	} elsif($perm == 0){
 		# Owner of this stack (can change visibility permissions).
 		$has{read} = 1;
 		$has{write} = 1;
@@ -105,6 +107,8 @@ if($has{read}){
 	my $count = KrakratCommon::getlinks({id_stack => $id_stack});
 
 	print "<h3>This stack has no links.</h3>\n" if(!$count);
+} else {
+	print "<p>You do not have permission to view this stack.</p>";
 }
 
 exit 0

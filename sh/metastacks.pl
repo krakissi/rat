@@ -22,8 +22,6 @@ if(length($user) == 0){
 my $count = KrakratCommon::getlinks({limit => 10, id_user =>$user, headings => 1 });
 
 # Uh oh, no stacks!
-if(!$count){
-	print qq{<h3>No stacks here.</h3>};
-}
+print qq{<h3>No links here.</h3>} if(!$count);
 
 exit 0
