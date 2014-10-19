@@ -32,7 +32,7 @@ while(my ($id, $name, $date, $creator) = $sth->fetchrow_array()){
 	print qq{\t<li><a href="stack.html?id=$id" title="Created by $cname ($date)">$name</a>\n};
 
 	# Display first three links
-	my $count = KrakratCommon::getlinks($id, 3);
+	KrakratCommon::getlinks($id, 3);
 
 	print qq{\t</table></li>\n};
 	$count++;
