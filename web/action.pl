@@ -58,7 +58,6 @@ if($op eq "stack_create"){
 }
 
 
-
 # Create a new stack. 1 parameter, the vanity name of the stack.
 sub stack_create {
 	my $name = shift;
@@ -79,6 +78,8 @@ sub stack_create {
 	};
 	$sth = $dbh->prepare($sql);
 	$sth->execute($id_user, $id);
+
+	return 0
 }
 
 # Add a link to an existing stack, takes ID of stack and URI, plus optional link description (meta).
@@ -96,12 +97,28 @@ sub link_add {
 	$sth->execute($id_user, $id_stack);
 	my ($perm, $creator) = $sth->fetchrow_array();
 
-	# FIXME debug
-	print "User $user ($id_user) has perm:$perm on stack:$id_stack (created by $creator)\n";
+	if(($perm == 0) || ($perm == 1)){
+		# Add link entry.
+		$sql = qq{
+			INSERT INTO link(uri, meta) VALUES(?, ?);
+		};
+		$sth = $dbh->prepare($sql);
+		$sth->execute($uri, $meta);
 
-	# Add link entry.
+		# Connect link to stack with stacklink entry.
+		my $id_link = $dbh->{mysql_insertid};
+		$sql = qq{
+			INSERT INTO stacklink(id_stack, id_link, addedby) VALUES(?, ?, ?);
+		};
+		$sth = $dbh->prepare($sql);
+		$sth->execute($id_stack, $id_link, $id_user);
 
-	# Connect link to stack with stacklink entry.
+		# Operation successful.
+		return 0
+	}
+
+	# Something went wrong.
+	return 1
 }
 
 sub unauthorized {

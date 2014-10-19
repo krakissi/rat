@@ -6,5 +6,20 @@
 	<meta charset=utf-8>
 	<????rat:prep>
 </head><body>
-	<h2>Stack!</h2>
+	<div>
+		<form action=action.pl method=post>
+			<input type=hidden name=op value=link_add>
+			<input type=hidden name=stack value="<????rat:query id>">
+
+			<label for=link_add_uri>URL</label>
+			<input id=link_add_uri name=uri><br>
+
+			<label for=link_add_meta>Title</label>
+			<input id=link_add_meta name=meta><br>
+
+			<input type=submit value=Push>
+			<input type=reset value=Clear>
+		</form>
+	</div>
+	<????rat:stack_view>
 </body></html>

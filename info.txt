@@ -1,5 +1,11 @@
 # krakrat
 # mperron (2014)
+query=sh/query.pl
+
+# Landing page utils
 prep=sh/prep.pl
 stacks=sh/stacks.pl
 metastacks=sh/metastacks.pl
+
+# Viewing tool
+stack_view=sh/stack_view.pl
