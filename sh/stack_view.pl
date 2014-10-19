@@ -79,6 +79,7 @@ if($has{read}){
 
 	# Dump out the links!
 	print "<ul>\n";
+	my $count = 0;
 	while(my ($uri, $short, $meta, $date) = $sth->fetchrow_array()){
 		print qq{\t<li><a href="$uri" title="$meta" target=_blank>$uri</a>};
 
@@ -88,7 +89,9 @@ if($has{read}){
 		}
 
 		print qq{</a></li>\n};
+		$count++;
 	}
+	print "\t<li>This stack has no links.</li>\n" if(!$count);
 	print "</ul>\n";
 }
 
