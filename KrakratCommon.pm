@@ -22,6 +22,7 @@ use DBI;
 		my $id_stack = $param{id_stack};
 		my $limit = $param{limit};
 		my $user = $param{id_user};
+		my $headings = $param{headings};
 
 		my $count = 0;
 
@@ -30,33 +31,21 @@ use DBI;
 
 		if($id_stack){
 			$sth->execute($id_stack);
-			print "\t<table>\n";
-			while(my ($uri, $short, $meta, $date) = $sth->fetchrow_array()){
-				my $display = (length($meta) > 0) ? $meta : $uri;
-
-				print qq{\t\t<tr><td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
-				print qq{<td><a href="$short">$short</a></td>} if(length($short) > 0);
-				print qq{</tr>\n};
-				$count++;
-			}
-			print "\t</table>\n";
 		} elsif($user){
 			$sth->execute($user);
-			print "\t<table>\n";
-			while(my ($uri, $short, $meta, $date, $stack) = $sth->fetchrow_array()){
-				my $display = (length($meta) > 0) ? $meta : $uri;
-
-				print qq{\t\t<tr><td>$stack</td><td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
-
-				if(length($short) > 0){
-					print qq{<td><a href="$short">$short</a></td>};
-				}
-
-				print qq{</tr>\n};
-				$count++;
-			}
-			print "\t</table>\n";
 		}
+
+		print "\t<table>\n";
+		print "\t\t<thead><tr><th>Stack</th><th>Date</th><th>Link</th></tr></thead>\n" if($headings);
+		while(my ($uri, $short, $meta, $date, $stack) = $sth->fetchrow_array()){
+			my $display = (length($meta) > 0) ? $meta : $uri;
+
+			print qq{\t\t<tr>} . ($stack ? "<td>$stack</td>" : "") . qq{<td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
+			print qq{<td><a href="$short">$short</a></td>} if(length($short));
+			print qq{</tr>\n};
+			$count++;
+		}
+		print "\t</table>\n";
 
 		return $count;
 	}
