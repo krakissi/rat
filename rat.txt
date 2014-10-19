@@ -60,3 +60,12 @@ User Experience
 (perm levels 0, 1, and 2) with a short sampling (maybe 3) of the newest
 links pushed onto that stack. Another list should show the newest links
 from all stacks (top 10 or so).
+
+
+Stack Management
+----------------
+
+	A stack.html page with query strings to call up a stack will be the
+primary mechanism for adding/removing links to a stack. Permissions
+should be checked in the userstack table to be sure that the current
+user can view/modify that stack.

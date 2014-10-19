@@ -32,7 +32,11 @@ my $sql = qq{
 my $sth = $dbh->prepare($sql);
 
 # Get all links in all stacks that krakissi is the owner of.
-$sth->execute($user, $perm, $size);
+if($perm == -1){
+	$sth->execute($user, $size);
+} else {
+	$sth->execute($user, $perm, $size);
+}
 
 my $count = 0;
 while(my @row = $sth->fetchrow_array()){

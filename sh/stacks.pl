@@ -14,10 +14,8 @@ if(length($user) == 0){
 }
 
 my $sql = qq{
-	SELECT sl.id_stack, l.id_link, l.uri
-	FROM link AS l
-	LEFT JOIN stacklink AS sl ON l.id_link = sl.id_link
-	LEFT JOIN stack AS s ON sl.id_stack = s.id_stack
+	SELECT s.id_stack, s.name, s.date, s.creator
+	FROM stack AS s
 	LEFT JOIN userstack AS us ON us.id_stack = s.id_stack
 	LEFT JOIN user AS u ON u.id_user = us.id_user
 	WHERE u.name = ? AND us.permission = ?;
@@ -27,15 +25,13 @@ my $sth = $dbh->prepare($sql);
 # Get all links in all stacks that krakissi is the owner of.
 $sth->execute($user, $perm);
 
+print "<ul>\n";
 my $count = 0;
-while(my @row = $sth->fetchrow_array()){
-	my ($id_stack, $id_link, $uri) = @row;
-
-	# Escape quotes in href, and HTML in the display portion.
-	print qq{<li><a href="$uri">$id_stack: $id_link - $uri</a></li>};
-
+while(my ($id, $name, $date, $creator) = $sth->fetchrow_array()){
+	print "\t<li>$id: $name ($creator at $date)</li>\n";
 	$count++;
 }
+print "</ul>\n";
 
 # Uh oh, no stacks!
 if(!$count){

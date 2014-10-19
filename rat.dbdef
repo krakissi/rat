@@ -12,6 +12,7 @@ CREATE TABLE `stack` (
   `creator` int(11) NOT NULL,
   `name` varchar(512) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `public` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_stack`)
 );
 
@@ -26,11 +27,13 @@ CREATE TABLE `user` (
 CREATE TABLE `stacklink` (
   `id_stack` int(11) NOT NULL,
   `id_link` int(11) NOT NULL,
-  `addedby` int(11) NOT NULL
+  `addedby` int(11) NOT NULL,
+  PRIMARY KEY (`id_stack`, `id_link`)
 );
 
 CREATE TABLE `userstack` (
   `id_user` int(11) NOT NULL,
   `id_stack` int(11) NOT NULL,
-  `permission` int(11) NOT NULL DEFAULT '0'
+  `permission` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id_user`, `id_stack`)
 );
