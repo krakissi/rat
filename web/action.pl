@@ -16,6 +16,9 @@ if(!($user =~ s/OK[\s](.*)/\1/)){
 	&unauthorized();
 }
 
+# Used for selecting multiple links.
+my @links;
+
 # Read standard formatted POST data.
 my %postvalues;
 chomp(my $buffer = <STDIN>);
@@ -26,6 +29,8 @@ if(length($buffer) > 0){
 		$value =~ s/\+/ /g;
 		$value = uri_unescape($value);
 		$postvalues{$name} = $value;
+
+		push(@links, $value) if($name eq "link");
 	}
 }
 
@@ -47,6 +52,10 @@ if($op eq "stack_create"){
 	&stack_create($postvalues{name});
 } elsif($op eq "link_add"){
 	&link_add($postvalues{stack}, $postvalues{uri}, $postvalues{meta});
+} elsif($op eq "link_remove"){
+	foreach my $link (@links){
+		&link_remove($link, $postvalues{stack});
+	}
 }
 
 my $referer = $ENV{HTTP_REFERER} // "/";
@@ -84,7 +93,7 @@ sub link_add {
 	# Find stack by id and check permission of user. Must be 0 or 1 to add.
 	my $sql = qq{
 		SELECT us.permission, s.creator
-		FROM stack as s
+		FROM stack AS s
 		LEFT JOIN userstack as us ON us.id_stack = s.id_stack
 		WHERE us.id_user = ? AND us.id_stack = ?;
 	};
@@ -92,6 +101,7 @@ sub link_add {
 	$sth->execute($id_user, $id_stack);
 	my ($perm, $creator) = $sth->fetchrow_array();
 
+	return 1 if(!length($perm));
 	if(($perm == 0) || ($perm == 1)){
 		# Add link entry.
 		$sql = qq{
@@ -114,6 +124,68 @@ sub link_add {
 
 	# Something went wrong.
 	return 1
+}
+
+sub link_remove {
+	my ($id_link, $id_stack) = @_;
+	return 1 if(!$id_link);
+
+	# Find out if the user has permission to modify the stack this link is in.
+	my $sql = qq{
+		SELECT us.permission, sl.addedby, sl.id_stack
+		FROM link AS s
+		LEFT JOIN stacklink AS sl ON sl.id_link = l.id_link
+		LEFT JOIN stack AS s ON s.id_stack = sl.id_stack
+		LEFT JOIN userstack AS us ON us.id_stack = s.id_stack
+		WHERE us.id_user = ?;
+	};
+	my $sth = $dbh->prepare($sql);
+	$sth->execute($id_user);
+
+	# Remove references from stacklink
+	while(my ($perm, $addedby, $stack) = $sth->fetchrow_array()){
+		return 1 if(!length($perm));
+		if(($perm == 0) || ($perm == 1)){
+			# Only remove if addedby id_user.
+			return 1 if(($perm == 1) && ($id_user != $addedby));
+
+			if($stack && ($stack == $id_stack)){
+				$sql = qq{
+					DELETE FROM stacklink
+					WHERE id_link = ? AND id_stack = ?;
+				};
+				$sth = $dbh->prepare($sql);
+				$sth->execute($id_link, $id_stack);
+			} else {
+				$sql = qq{
+					DELETE FROM stacklink
+					WHERE id_link = ?;
+				};
+				$sth = $dbh->prepare($sql);
+				$sth->execute($id_link);
+			}
+		}
+	}
+
+	# Are there any references left in stacklink?
+	$sql = qq{
+		SELECT count(*)
+		FROM stacklink
+		WHERE id_link = ?;
+	};
+	$sth = $dbh->prepare($sql);
+	$sth->execute();
+	my ($count) = $sth->fetchrow_array();
+
+	# If no more references, delete from link.
+	if(!$count){
+		$sql = qq{
+			DELETE FROM link
+			WHERE id_link = ?;
+		};
+		$sth = $dbh->prepare($sql);
+		$sth->execute($id_link);
+	}
 }
 
 sub unauthorized {

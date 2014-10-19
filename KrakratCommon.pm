@@ -23,6 +23,7 @@ use DBI;
 		my $limit = $param{limit};
 		my $user = $param{id_user};
 		my $headings = $param{headings};
+		my $controls = $param{controls};
 
 		my $count = 0;
 
@@ -35,9 +36,10 @@ use DBI;
 			$sth->execute($user);
 		}
 
+		print qq{<input type=hidden name=stack value="$id_stack">\n} if($controls && $id_stack);
 		print "\t<table>\n";
 		print "\t\t<thead><tr><th>Stack</th><th>Date</th><th>Link</th></tr></thead>\n" if($headings);
-		while(my ($uri, $short, $meta, $date, $stack, $id_stack) = $sth->fetchrow_array()){
+		while(my ($id_link, $uri, $short, $meta, $date, $stack, $id_stack) = $sth->fetchrow_array()){
 			my $display = (length($meta) > 0) ? $meta : $uri;
 
 			$stack = &escape_html($stack);
@@ -47,7 +49,7 @@ use DBI;
 			my $short_uri = &escape_link($short);
 			$short = &escape_html($short);
 
-			print qq{\t\t<tr>} . ($stack ? qq{<td><a href="stack.html?id=$id_stack">$stack</a></td>} : "") . qq{<td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
+			print qq{\t\t<tr>} . ($controls ? qq{<td><input type=checkbox name=link value="$id_link">} : "") . ($stack ? qq{<td><a href="stack.html?id=$id_stack">$stack</a></td>} : "") . qq{<td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
 			print qq{<td><a href="$short_uri">$short</a></td>} if(length($short));
 			print qq{</tr>\n};
 			$count++;
@@ -65,7 +67,7 @@ use DBI;
 		my $sql;
 		if($id_stack){
 			$sql = qq{
-				SELECT l.uri, l.short, l.meta, l.date
+				SELECT l.id_link, l.uri, l.short, l.meta, l.date
 				FROM link AS l
 				LEFT JOIN stacklink AS sl ON sl.id_link = l.id_link
 				WHERE sl.id_stack = ?
@@ -74,7 +76,7 @@ use DBI;
 		} else {
 			# No id_stack value means to select from all stacks the user can read.
 			$sql = qq{
-				SELECT l.uri, l.short, l.meta, l.date, s.name, s.id_stack
+				SELECT l.id_link, l.uri, l.short, l.meta, l.date, s.name, s.id_stack
 				FROM link AS l
 				LEFT JOIN stacklink AS sl ON sl.id_link = l.id_link
 				LEFT JOIN stack AS s ON s.id_stack = sl.id_stack
@@ -92,14 +94,14 @@ use DBI;
 # Escape quotes for quoted strings.
 sub escape_link {
 	my $link = shift;
+	$link =~ s/"/&quot;/g if($link);
 
-	return $link =~ s/"/&quot;/g if($link);
+	return $link;
 }
 
 # Escape HTML for generic display.
 sub escape_html {
 	my $link = shift;
-
 	if($link){
 		$link =~ s/&/&amp;/g;
 		$link =~ s/</&lt;/g;
