@@ -9,6 +9,8 @@ package KrakratCommon;
 use strict;
 use DBI;
 
+# getlinks
+# Used to create tables of links in a stack.
 {
 	my $l;
 	my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
@@ -16,7 +18,7 @@ use DBI;
 
 	# Get links. Requires stack ID. Optional limit value will limit the return to n links.
 	sub getlinks {
-		my ($id_stack, $limit) = @_;
+		my ($id_stack, $limit, $user) = @_;
 		my $count = 0;
 
 		# Limit value has changed, rebuild prepared statement...
@@ -34,8 +36,8 @@ use DBI;
 				$count++;
 			}
 			print "\t</table>\n";
-		} else {
-			$sth->execute("krakissi");
+		} elsif($user){
+			$sth->execute($user);
 			print "\t<table>\n";
 			while(my ($uri, $short, $meta, $date, $stack) = $sth->fetchrow_array()){
 				my $display = (length($meta) > 0) ? $meta : $uri;
