@@ -31,14 +31,6 @@ if(length($buffer) > 0){
 
 my $op = $postvalues{op};
 
-# FIXME debug
-print "Content-Type: text/plain; charset=utf-8\n\n";
-
-# FIXME debug
-foreach my $key (keys %postvalues){
-	print "$key: $postvalues{$key}\n";
-}
-
 # Find user ID (always useful).
 my $sql = qq{
 	SELECT u.id_user
@@ -57,12 +49,14 @@ if($op eq "stack_create"){
 	&link_add($postvalues{stack}, $postvalues{uri}, $postvalues{meta});
 }
 
+my $referer = $ENV{HTTP_REFERER} // "/";
+print "Status: 302 Operation\nLocation: $referer\n\n";
+exit 0;
 
 # Create a new stack. 1 parameter, the vanity name of the stack.
 sub stack_create {
 	my $name = shift;
-	$name = $name // "";
-	$name = "New Stack" if(!length($name));
+	return 1 if(!length($name));
 
 	# Create the new stack.
 	my $sql = qq{
@@ -85,6 +79,7 @@ sub stack_create {
 # Add a link to an existing stack, takes ID of stack and URI, plus optional link description (meta).
 sub link_add {
 	my ($id_stack, $uri, $meta) = @_;
+	return 1 if(!length($uri));
 
 	# Find stack by id and check permission of user. Must be 0 or 1 to add.
 	my $sql = qq{
@@ -125,5 +120,3 @@ sub unauthorized {
 	print "Status: 401 Unauthorized\n\n";
 	exit 0
 }
-
-exit 0
