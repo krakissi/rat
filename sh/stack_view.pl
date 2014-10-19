@@ -7,6 +7,7 @@
 
 use strict;
 use DBI;
+require KrakratCommon;
 
 my %has;
 my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
@@ -100,33 +101,9 @@ if($has{owner}){
 if($has{read}){
 	print "<h2>$name</h2>\n";
 
-	$sql = qq{
-		SELECT l.uri, l.short, l.meta, l.date
-		FROM link AS l
-		LEFT JOIN stacklink AS sl ON sl.id_link = l.id_link
-		WHERE sl.id_stack = ?
-		ORDER BY l.date DESC;
-	};
-	$sth = $dbh->prepare($sql);
-	$sth->execute($id_stack);
-
 	# Dump out the links!
-	print "<table>\n";
-	my $count = 0;
-	while(my ($uri, $short, $meta, $date) = $sth->fetchrow_array()){
-		my $display = (length($meta) > 0) ? $meta : $uri;
+	my $count = KrakratCommon::getlinks($id_stack);
 
-		print qq{\t<tr><td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
-
-		# Short variant of the link, if available.
-		if(length($short) > 0){
-			print qq{<td><a href="$short">$short</a></td>};
-		}
-
-		print qq{</tr>\n};
-		$count++;
-	}
-	print "</table>\n";
 	print "<h3>This stack has no links.</h3>\n" if(!$count);
 }
 
