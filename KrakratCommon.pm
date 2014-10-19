@@ -18,7 +18,11 @@ use DBI;
 
 	# Get links. Requires stack ID. Optional limit value will limit the return to n links.
 	sub getlinks {
-		my ($id_stack, $limit, $user) = @_;
+		my %param = %{@_[0]};
+		my $id_stack = $param{id_stack};
+		my $limit = $param{limit};
+		my $user = $param{id_user};
+
 		my $count = 0;
 
 		# Limit value has changed, rebuild prepared statement...

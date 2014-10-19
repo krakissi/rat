@@ -19,7 +19,7 @@ if(length($user) == 0){
 	exit 0
 }
 
-my $count = KrakratCommon::getlinks(undef, 10, $user);
+my $count = KrakratCommon::getlinks({limit => 10, id_user =>$user});
 
 # Uh oh, no stacks!
 if(!$count){

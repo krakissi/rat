@@ -102,7 +102,7 @@ if($has{read}){
 	print "<h2>$name</h2>\n";
 
 	# Dump out the links!
-	my $count = KrakratCommon::getlinks($id_stack);
+	my $count = KrakratCommon::getlinks({id_stack => $id_stack});
 
 	print "<h3>This stack has no links.</h3>\n" if(!$count);
 }
