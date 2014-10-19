@@ -4,6 +4,7 @@ query=sh/query.pl
 
 # Landing page utils
 prep=sh/prep.pl
+landing=sh/landing.pl
 stacks=sh/stacks.pl
 metastacks=sh/metastacks.pl
 

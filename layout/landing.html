@@ -1,0 +1,26 @@
+<div>
+	<h2>Create a Stack</h2>
+	<form action=action.pl method=post>
+		<input type=hidden name=op value=stack_create>
+
+		<label for=stack_create_name>Name</label>
+		<input id=stack_create_name name=name>
+		<input type=submit value=Create>
+	</form>
+</div>
+
+<!-- Latest links from all stacks. -->
+<h2>Meta Stacks (Latest from All)</h2>
+<????rat:metastacks>
+
+<!-- Stacks the user owns. -->
+<h2>Owned Stacks</h2>
+<????rat:stacks>
+
+<!-- Stacks the user can contribute to. -->
+<h2>Shared Stacks</h2>
+<????rat:stacks 1>
+
+<!-- Stacks the user can view, but not modify. -->
+<h2>Subbed Stacks</h2>
+<????rat:stacks 2>
