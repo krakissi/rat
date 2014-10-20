@@ -7,7 +7,7 @@
 
 use strict;
 use DBI;
-require KrakratCommon;
+use KrakratCommon;
 
 my %has;
 my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";

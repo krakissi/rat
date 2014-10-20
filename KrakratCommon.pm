@@ -108,7 +108,7 @@ sub escape_html {
 		$link =~ s/>/&gt;/g;
 	}
 
-	return $link
+	return $link;
 }
 
 
