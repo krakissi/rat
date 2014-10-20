@@ -1,5 +1,4 @@
-#!/usr/bin/perl
-# Common
+# KrakratCommon
 # mperron (2014)
 #
 # Common krakrat functionality.
