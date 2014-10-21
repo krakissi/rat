@@ -55,7 +55,9 @@ my ($id_user) = $sth->fetchrow_array();
 
 # Possible operations
 if($op eq "stack_create"){
-	&stack_create($postvalues{name});
+	&stack_create({
+		name => $postvalues{name}
+	});
 } elsif($op eq "stack_edit"){
 	&stack_edit({
 		id_stack => $postvalues{stack},
@@ -78,7 +80,9 @@ exit 0;
 
 # Create a new stack. 1 parameter, the vanity name of the stack.
 sub stack_create {
-	my $name = shift;
+	my %params = %{@_[0]};
+	my $name = $params{name};
+	my $no_edit = $params{no_edit};
 	return 1 if(!length($name));
 
 	# Create the new stack.
@@ -95,6 +99,9 @@ sub stack_create {
 	};
 	$sth = $dbh->prepare($sql);
 	$sth->execute($id_user, $id);
+
+	# Alter the referer to go directly to the stack editing page.
+	$referer = "stack.html?id=$id" unless($no_edit);
 
 	return 0
 }
