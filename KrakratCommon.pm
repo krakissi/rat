@@ -8,12 +8,11 @@ package KrakratCommon;
 use strict;
 use DBI;
 
-# getlinks
-# Used to create tables of links in a stack.
+# Database depedent subroutines are in this controlled scope.
 {
 	my $l;
 	my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
-	my $sth = &prepare(3);
+	my $sth_getlinks;
 
 	# Get links. Requires stack ID. Optional limit value will limit the return to n links.
 	sub getlinks {
@@ -27,18 +26,18 @@ use DBI;
 		my $count = 0;
 
 		# Limit value has changed, rebuild prepared statement...
-		$sth = &prepare($id_stack, $limit) if(!$limit || ($limit != $l));
+		$sth_getlinks = &getlinks_prepare($id_stack, $limit) if(!$limit || ($limit != $l));
 
 		if($id_stack){
-			$sth->execute($id_stack);
+			$sth_getlinks->execute($id_stack);
 		} elsif($user){
-			$sth->execute($user);
+			$sth_getlinks->execute($user);
 		}
 
 		print qq{<input type=hidden name=stack value="$id_stack">\n} if($controls && $id_stack);
 		print "\t<table>\n";
 		print "\t\t<thead><tr><th>Stack</th><th>Date</th><th>Link</th></tr></thead>\n" if($headings);
-		while(my ($id_link, $uri, $short, $meta, $date, $stack, $id_stack) = $sth->fetchrow_array()){
+		while(my ($id_link, $uri, $short, $meta, $date, $stack, $id_stack) = $sth_getlinks->fetchrow_array()){
 			my $display = (length($meta) > 0) ? $meta : $uri;
 
 			$stack = &escape_html($stack);
@@ -59,7 +58,7 @@ use DBI;
 	}
 
 	# Build the prepared statement for getting links.
-	sub prepare {
+	sub getlinks_prepare {
 		my $id_stack = shift;
 		$l = shift;
 
@@ -86,7 +85,72 @@ use DBI;
 			} . ($l ? "LIMIT $l;" : ";");
 		}
 
-		return $dbh->prepare($sql);
+		$sth_getlinks = $dbh->prepare($sql);
+	}
+
+	# Find permissions that a user has on a given stack.
+	sub permissions {
+		my %params = %{@_[0]};
+		my $id_stack = $params{id_stack};
+		my $id_link = $params{id_link};
+		my $user = $params{user};
+
+		# The eventual return value. What permissions does the user have?
+		my %has;
+
+		if(length($id_stack)){
+			my $sql = qq{
+				SELECT s.name, s.creator, s.date, s.public
+				FROM stack AS s
+				WHERE s.id_stack = ?;
+			};
+			my $sth = $dbh->prepare($sql);
+			$sth->execute($id_stack);
+			my ($name, $creator, $date, $public) = $sth->fetchrow_array();
+			$has{read} = 1 if($public == 1);
+
+			my %info = {
+				name => $name,
+				creator => $creator,
+				date => $date,
+				public => $public
+			};
+			$has{info} = %info;
+
+			if(length($user)){
+				# User is logged in; check for permissions on this stack.
+				$sql = qq{
+					SELECT us.permission
+					FROM userstack AS us
+					WHERE us.id_user = (SELECT u.id_user FROM user AS u WHERE u.name = ?)
+						AND us.id_stack = ?;
+				};
+				$sth = $dbh->prepare($sql);
+				$sth->execute($user, $id_stack);
+				my ($perm) = $sth->fetchrow_array();
+
+				if(!length($perm)){
+					# No additional permissions.
+				} elsif($perm == 0){
+					# Owner of this stack (can change visibility permissions).
+					$has{read} = 1;
+					$has{write} = 1;
+					$has{owner} = 1;
+				} elsif($perm == 1){
+					# Contributor to this stack.
+					$has{read} = 1;
+					$has{write} = 1;
+				} elsif($perm == 2){
+					# Reader of this stack only.
+					$has{read} = 1;
+				}
+			}
+		} elsif(length($id_link)){
+			# TODO Check link permissions.
+			# A sane place for this functionality to be, if it becomes needed.
+		}
+
+		return %has;
 	}
 }
 
@@ -110,6 +174,9 @@ sub escape_html {
 	return $link;
 }
 
+
+# Load up for a default of 3 links previewed per stack.
+&getlinks_prepare(3);
 
 # Returning a true value...perl pls.
 1

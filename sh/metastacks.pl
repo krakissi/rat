@@ -6,20 +6,18 @@
 
 use strict;
 use DBI;
-use KrakratCommon;
+require KrakratCommon;
 
-my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
 my $user = $ENV{kraknet_user};
-my $perm = $ARGV[0] // -1;
-my $size = $ARGV[1] // 10;
+my $size = $ARGV[0] // 10;
 
-if(length($user) == 0){
+if(!length($user)){
 	# Not logged in!
 	print "<!-- Not logged in... -->";
 	exit 0
 }
 
-my $count = KrakratCommon::getlinks({limit => 10, id_user =>$user});
+my $count = KrakratCommon::getlinks({ limit => $size, id_user =>$user });
 
 # Uh oh, no stacks!
 print qq{<h3>No links here.</h3>} if(!$count);

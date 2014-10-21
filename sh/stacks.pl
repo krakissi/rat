@@ -2,7 +2,7 @@
 
 use strict;
 use DBI;
-use KrakratCommon;
+require KrakratCommon;
 
 my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
 my $user = $ENV{kraknet_user};
@@ -34,7 +34,7 @@ while(my ($id, $name, $date, $creator) = $sth->fetchrow_array()){
 	print qq{\t<li><a href="stack.html?id=$id" title="Created by $cname ($date)">$name</a>\n};
 
 	# Display first three links
-	KrakratCommon::getlinks({id_stack => $id, limit => 3});
+	KrakratCommon::getlinks({ id_stack => $id, limit => 3 });
 
 	print qq{\t</li>\n};
 	$count++;
@@ -42,9 +42,7 @@ while(my ($id, $name, $date, $creator) = $sth->fetchrow_array()){
 print "</ul>\n";
 
 # Uh oh, no stacks!
-if(!$count){
-	print qq{<h3>No stacks here.</h3>};
-}
+print qq{<h3>No stacks here.</h3>} if(!$count);
 
 # Find the name from a user ID.
 sub creator_find {

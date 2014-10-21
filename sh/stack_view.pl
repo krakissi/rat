@@ -9,7 +9,6 @@ use strict;
 use DBI;
 use KrakratCommon;
 
-my %has;
 my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
 my $user = $ENV{kraknet_user};
 
@@ -33,44 +32,8 @@ if(!($id_stack =~ /^[0-9]*$/)){
 	exit 0
 }
 
-my $sql = qq{
-	SELECT s.name, s.creator, s.date, s.public
-	FROM stack AS s
-	WHERE s.id_stack = ?;
-};
-my $sth = $dbh->prepare($sql);
-$sth->execute($id_stack);
-my ($name, $creator, $date, $public) = $sth->fetchrow_array();
-$has{read} = 1 if($public == 1);
-
-if(length($user) > 0){
-	# User is logged in; check for permissions on this stack.
-	$sql = qq{
-		SELECT us.permission
-		FROM userstack AS us
-		WHERE us.id_user = (SELECT u.id_user FROM user AS u WHERE u.name = ?)
-			AND us.id_stack = ?;
-	};
-	$sth = $dbh->prepare($sql);
-	$sth->execute($user, $id_stack);
-	my ($perm) = $sth->fetchrow_array();
-
-	if(length($perm) == 0){
-		# No additional permissions.
-	} elsif($perm == 0){
-		# Owner of this stack (can change visibility permissions).
-		$has{read} = 1;
-		$has{write} = 1;
-		$has{owner} = 1;
-	} elsif($perm == 1){
-		# Contributor to this stack.
-		$has{read} = 1;
-		$has{write} = 1;
-	} elsif($perm == 2){
-		# Reader of this stack only.
-		$has{read} = 1;
-	}
-}
+my %has = KrakratCommon::permissions({ id_stack => $id_stack, user => $user });
+my %info = $has{info};
 
 # Edit controls, for adding new links.
 if($has{write}){
@@ -101,7 +64,7 @@ if($has{owner}){
 }
 
 if($has{read}){
-	$name = KrakratCommon::escape_html($name);
+	my $name = KrakratCommon::escape_html($info{name});
 	print "<h2>$name</h2>\n";
 	print qq{<form action=action.pl method=post id=form_remove>\n<input type=hidden name=op value=link_remove>\n};
 
