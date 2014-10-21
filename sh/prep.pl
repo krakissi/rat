@@ -15,12 +15,22 @@ if(length($user) == 0){
 	exit 0
 }
 
-# Insert into the database...ignore if the value already exists (names in this table are unique).
+# Is the user in the database yet?
 my $sql = qq{
-	INSERT IGNORE INTO user(name) VALUES(?);
+	SELECT id_user FROM user WHERE name = ?;
 };
 my $sth = $dbh->prepare($sql);
 $sth->execute($user);
+my ($id) = $sth->fetchrow_array();
+
+# No ID available; add the user to this database.
+if(!length($id)){
+	$sql = qq{
+		INSERT INTO user(name) VALUES(?);
+	};
+	$sth = $dbh->prepare($sql);
+	$sth->execute($user);
+}
 
 print "<!-- Hi, $user! -->";
 
