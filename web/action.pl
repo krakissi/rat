@@ -8,6 +8,12 @@ use strict;
 use URI::Escape;
 use DBI;
 
+my $referer = $ENV{HTTP_REFERER} // "/";
+
+# Locate KrakratCommon module
+chomp(my $home = qx/mod_home rat/);
+eval "require '$home/KrakratCommon.pm';";
+
 my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
 
 # Reject actions from unauthorized users (not logged in).
@@ -50,6 +56,13 @@ my ($id_user) = $sth->fetchrow_array();
 # Possible operations
 if($op eq "stack_create"){
 	&stack_create($postvalues{name});
+} elsif($op eq "stack_edit"){
+	&stack_edit({
+		id_stack => $postvalues{stack},
+		name => $postvalues{name},
+		owner => $postvalues{owner},
+		public => $postvalues{public}
+	});
 } elsif($op eq "link_add"){
 	&link_add($postvalues{stack}, $postvalues{uri}, $postvalues{meta});
 } elsif($op eq "link_remove"){
@@ -58,7 +71,6 @@ if($op eq "stack_create"){
 	}
 }
 
-my $referer = $ENV{HTTP_REFERER} // "/";
 print "Status: 302 Operation\nLocation: $referer\n\n";
 exit 0;
 
@@ -83,6 +95,42 @@ sub stack_create {
 	$sth->execute($id_user, $id);
 
 	return 0
+}
+
+sub stack_edit {
+	my %params = %{@_[0]};
+	my $id_stack = $params{id_stack};
+	my $name = $params{name};
+	my $owner = $params{owner};
+	my $public = $params{public};
+
+	my %has = KrakratCommon::permissions({ id_stack => $id_stack, user => $user });
+	my $info = $has{info};
+
+	# Only the owner can edit the stack meta (name, permissions, etc.)
+	if($has{owner}){
+		if(length($name)){
+			my $sql = qq{
+				UPDATE stack
+				SET name = ?
+				WHERE id_stack = ?;
+			};
+			my $sth = $dbh->prepare($sql);
+			$sth->execute($name, $id_stack);
+		}
+		if(length($public) && (($public == 0) || ($public == 1))){
+			my $sql = qq{
+				UPDATE stack
+				SET public = ?
+				WHERE id_stack = ?;
+			};
+			my $sth = $dbh->prepare($sql);
+			$sth->execute($public, $id_stack);
+		}
+		if(length($owner)){
+			# TODO Changing ownership
+		}
+	}
 }
 
 # Add a link to an existing stack, takes ID of stack and URI, plus optional link description (meta).
@@ -133,14 +181,13 @@ sub link_remove {
 	# Find out if the user has permission to modify the stack this link is in.
 	my $sql = qq{
 		SELECT us.permission, sl.addedby, sl.id_stack
-		FROM link AS s
-		LEFT JOIN stacklink AS sl ON sl.id_link = l.id_link
+		FROM stacklink AS sl
 		LEFT JOIN stack AS s ON s.id_stack = sl.id_stack
 		LEFT JOIN userstack AS us ON us.id_stack = s.id_stack
-		WHERE us.id_user = ?;
+		WHERE us.id_user = ? AND sl.id_link = ?;
 	};
 	my $sth = $dbh->prepare($sql);
-	$sth->execute($id_user);
+	$sth->execute($id_user, $id_link);
 
 	# Remove references from stacklink
 	while(my ($perm, $addedby, $stack) = $sth->fetchrow_array()){
@@ -149,19 +196,19 @@ sub link_remove {
 			# Only remove if addedby id_user.
 			return 1 if(($perm == 1) && ($id_user != $addedby));
 
-			if($stack && ($stack == $id_stack)){
+			if(length($stack) && ($stack == $id_stack)){
 				$sql = qq{
 					DELETE FROM stacklink
 					WHERE id_link = ? AND id_stack = ?;
 				};
-				$sth = $dbh->prepare($sql);
+				my $sth = $dbh->prepare($sql);
 				$sth->execute($id_link, $id_stack);
 			} else {
 				$sql = qq{
 					DELETE FROM stacklink
 					WHERE id_link = ?;
 				};
-				$sth = $dbh->prepare($sql);
+				my $sth = $dbh->prepare($sql);
 				$sth->execute($id_link);
 			}
 		}
@@ -189,6 +236,6 @@ sub link_remove {
 }
 
 sub unauthorized {
-	print "Status: 401 Unauthorized\n\n";
+	print "Status: 302 Unauthorized\nLocation: $referer\n\n";
 	exit 0
 }

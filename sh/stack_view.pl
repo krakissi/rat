@@ -7,7 +7,7 @@
 
 use strict;
 use DBI;
-use KrakratCommon;
+require KrakratCommon;
 
 my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
 my $user = $ENV{kraknet_user};
@@ -33,7 +33,11 @@ if(!($id_stack =~ /^[0-9]*$/)){
 }
 
 my %has = KrakratCommon::permissions({ id_stack => $id_stack, user => $user });
-my %info = $has{info};
+my $info = $has{info};
+
+my $name = KrakratCommon::escape_html($info->{name});
+my $name_quot = KrakratCommon::escape_link($info->{name});
+my $public = $info->{public};
 
 # Edit controls, for adding new links.
 if($has{write}){
@@ -56,15 +60,33 @@ if($has{write}){
 }
 
 if($has{owner}){
+	my $sel_private = ($public ? "" : " selected");
+	my $sel_public = ($public ? " selected" : "");
+
 	print qq{
 	<div>
 		<p>You are the owner of this stack.</p>
+		<form action=action.pl method=post>
+			<input type=hidden name=op value=stack_edit>
+			<input type=hidden name=stack value="$id_stack">
+
+			<label for=stack_edit_name>Name</label>
+			<input id=stack_edit_name name=name value="$name_quot"><br>
+
+			<label for=stack_edit_public>Visibility</label>
+			<select id=stack_edit_public name=public>
+				<option value=0$sel_private>Private</option>
+				<option value=1$sel_public>Public</option>
+			</select>
+			<br>
+
+			<input type=submit value="Update Stack">
+		</form>
 	</div>
 	};
 }
 
 if($has{read}){
-	my $name = KrakratCommon::escape_html($info{name});
 	print "<h2>$name</h2>\n";
 	print qq{<form action=action.pl method=post id=form_remove>\n<input type=hidden name=op value=link_remove>\n};
 

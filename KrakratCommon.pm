@@ -92,7 +92,6 @@ use DBI;
 	sub permissions {
 		my %params = %{@_[0]};
 		my $id_stack = $params{id_stack};
-		my $id_link = $params{id_link};
 		my $user = $params{user};
 
 		# The eventual return value. What permissions does the user have?
@@ -109,13 +108,13 @@ use DBI;
 			my ($name, $creator, $date, $public) = $sth->fetchrow_array();
 			$has{read} = 1 if($public == 1);
 
-			my %info = {
+			my $info = {
 				name => $name,
 				creator => $creator,
 				date => $date,
 				public => $public
 			};
-			$has{info} = %info;
+			$has{info} = $info;
 
 			if(length($user)){
 				# User is logged in; check for permissions on this stack.
@@ -145,9 +144,6 @@ use DBI;
 					$has{read} = 1;
 				}
 			}
-		} elsif(length($id_link)){
-			# TODO Check link permissions.
-			# A sane place for this functionality to be, if it becomes needed.
 		}
 
 		return %has;
