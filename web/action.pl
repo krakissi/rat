@@ -63,6 +63,8 @@ if($op eq "stack_create"){
 		owner => $postvalues{owner},
 		public => $postvalues{public}
 	});
+} elsif($op eq "stack_remove"){
+	&stack_remove($postvalues{stack});
 } elsif($op eq "link_add"){
 	&link_add($postvalues{stack}, $postvalues{uri}, $postvalues{meta});
 } elsif($op eq "link_remove"){
@@ -97,6 +99,7 @@ sub stack_create {
 	return 0
 }
 
+# Alter a stack; only the owner may do this.
 sub stack_edit {
 	my %params = %{@_[0]};
 	my $id_stack = $params{id_stack};
@@ -130,6 +133,49 @@ sub stack_edit {
 		if(length($owner)){
 			# TODO Changing ownership
 		}
+	}
+}
+
+# Remove the specified stack (id_stack val) and all associated links permanently; only the owner may do this.
+sub stack_remove {
+	my $id_stack = shift;
+	return 1 if(!length($id_stack));
+
+	my %has = KrakratCommon::permissions({ id_stack => $id_stack, user => $user });
+	my $info = $has{info};
+
+	if($has{owner}){
+		# Find all links in this stack.
+		my $sql = qq{
+			SELECT id_link
+			FROM stacklink
+			WHERE id_stack = ?;
+		};
+		my $sth = $dbh->prepare($sql);
+		$sth->execute($id_stack);
+
+		# Remove links which are exclusive to this stack, and all stacklink references.
+		while(my ($id_link) = $sth->fetchrow_array()){
+			&link_remove($id_link, $id_stack);
+		}
+
+		# Delete the stack.
+		$sql = qq{
+			DELETE FROM stack
+			WHERE id_stack = ?;
+		};
+		$sth = $dbh->prepare($sql);
+		$sth->execute($id_stack);
+
+		$sql = qq{
+			DELETE FROM userstack
+			WHERE id_stack = ?;
+		};
+		$sth = $dbh->prepare($sql);
+		$sth->execute($id_stack);
+
+		# Alter referer; the stack is no longer a safe place to return to.
+		$referer = "/" if($referer =~ /\/stack\.html.*\?id=/);
 	}
 }
 

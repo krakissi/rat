@@ -64,6 +64,7 @@ if($has{owner}){
 	my $sel_public = ($public ? " selected" : "");
 
 	print qq{
+	<!-- stack_edit -->
 	<div>
 		<p>You are the owner of this stack.</p>
 		<form action=action.pl method=post>
@@ -81,6 +82,15 @@ if($has{owner}){
 			<br>
 
 			<input type=submit value="Update Stack">
+		</form>
+	</div>
+
+	<!-- stack_remove -->
+	<div>
+		<form action=action.pl method=post>
+			<input type=hidden name=op value=stack_remove>
+			<input type=hidden name=stack value="$id_stack">
+			<input type=submit value="Permanently Delete This Stack">
 		</form>
 	</div>
 	};
