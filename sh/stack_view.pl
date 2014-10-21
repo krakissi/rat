@@ -91,9 +91,12 @@ if($has{read}){
 	print qq{<form action=action.pl method=post id=form_remove>\n<input type=hidden name=op value=link_remove>\n};
 
 	# Dump out the links!
-	my $count = KrakratCommon::getlinks({id_stack => $id_stack, controls => 1});
+	my $count = KrakratCommon::getlinks({
+		id_stack => $id_stack,
+		controls => $has{write}
+	});
 
-	print qq{<input type=submit value="Remove Selected"><input type=reset value="Unselect All"></form>\n};
+	print qq{<input type=submit value="Remove Selected"><input type=reset value="Unselect All"></form>\n} if($has{write});
 	print "<h3>This stack has no links.</h3>\n" if(!$count);
 } else {
 	print "<p>You do not have permission to view this stack.</p>";
