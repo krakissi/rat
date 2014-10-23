@@ -39,6 +39,8 @@ my $name = KrakratCommon::escape_html($info->{name});
 my $name_quot = KrakratCommon::escape_link($info->{name});
 my $public = $info->{public};
 
+print "<div id=edit_controls>\n";
+
 # Edit controls, for adding new links.
 if($has{write}){
 	print qq{
@@ -48,10 +50,10 @@ if($has{write}){
 			<input type=hidden name=stack value="$id_stack">
 
 			<label for=link_add_uri>URL</label>
-			<input id=link_add_uri name=uri><br>
+			<input type=text id=link_add_uri name=uri><br>
 
 			<label for=link_add_meta>Title</label>
-			<input id=link_add_meta name=meta><br>
+			<input type=text id=link_add_meta name=meta><br>
 
 			<input type=submit value=Push>
 			<input type=reset value=Clear>
@@ -72,7 +74,7 @@ if($has{owner}){
 			<input type=hidden name=stack value="$id_stack">
 
 			<label for=stack_edit_name>Name</label>
-			<input id=stack_edit_name name=name value="$name_quot"><br>
+			<input type=text id=stack_edit_name name=name value="$name_quot"><br>
 
 			<label for=stack_edit_public>Visibility</label>
 			<select id=stack_edit_public name=public>
@@ -87,14 +89,19 @@ if($has{owner}){
 
 	<!-- stack_remove -->
 	<div>
-		<form action=action.pl method=post>
+		<form action=action.pl method=post name=form_stack_remove>
 			<input type=hidden name=op value=stack_remove>
 			<input type=hidden name=stack value="$id_stack">
-			<input type=submit value="Permanently Delete This Stack">
+			<input type=button value="Delete Stack" onclick="delete_stack();">
 		</form>
 	</div>
 	};
 }
+
+# End of edit controls.
+print "</div>\n";
+
+print "<div id=view>\n";
 
 if($has{read}){
 	print "<h2>$name</h2>\n";
@@ -111,5 +118,7 @@ if($has{read}){
 } else {
 	print "<p>You do not have permission to view this stack.</p>";
 }
+
+print "</div>\n";
 
 exit 0

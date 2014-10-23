@@ -1,0 +1,30 @@
+/* Inline block generic pane class. Other specific IDs may extend it. */
+#view,
+#edit_controls,
+.inline_block {
+	vertical-align: top;
+	display: inline-block;
+}
+
+/* The pane containing controls for editing this stack. */
+#edit_controls {
+	width: 250px;
+}
+#edit_controls div {
+	padding-bottom: 1em;
+}
+#edit_controls form label {
+	font-size: 10px;
+	text-transform: uppercase;
+	cursor: pointer;
+	display: block;
+}
+#edit_controls form input[type=text],
+#edit_controls form select {
+	margin-bottom: 0.5em;
+	width: 225px;
+}
+
+/* The pane which enumerates links in this stack. */
+#view {
+}
