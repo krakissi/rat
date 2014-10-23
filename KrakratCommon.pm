@@ -8,10 +8,15 @@ package KrakratCommon;
 use strict;
 use DBI;
 
+# Get Database connection.
+sub get_connection {
+	return DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
+}
+
 # Database depedent subroutines are in this controlled scope.
 {
 	my $l;
-	my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
+	my $dbh = &get_connection();
 	my $sth_getlinks;
 
 	# Get links. Requires stack ID. Optional limit value will limit the return to n links.
@@ -20,8 +25,8 @@ use DBI;
 		my $id_stack = $param{id_stack};
 		my $limit = $param{limit};
 		my $user = $param{id_user};
-		my $headings = $param{headings};
 		my $controls = $param{controls};
+		my $no_date = $param{no_date};
 
 		my $count = 0;
 
@@ -36,7 +41,6 @@ use DBI;
 
 		print qq{<input type=hidden name=stack value="$id_stack">\n} if($controls && $id_stack);
 		print "\t<table>\n";
-		print "\t\t<thead><tr><th>Stack</th><th>Date</th><th>Link</th></tr></thead>\n" if($headings);
 		while(my ($id_link, $uri, $short, $meta, $date, $stack, $id_stack) = $sth_getlinks->fetchrow_array()){
 			my $display = (length($meta) > 0) ? $meta : $uri;
 
@@ -47,7 +51,12 @@ use DBI;
 			my $short_uri = &escape_link($short);
 			$short = &escape_html($short);
 
-			print qq{\t\t<tr>} . ($controls ? qq{<td><input type=checkbox name=link value="$id_link">} : "") . ($stack ? qq{<td><a href="stack.html?id=$id_stack">$stack</a></td>} : "") . qq{<td>$date</td><td><a href="$uri" target=_blank>$display</a></td>};
+			print qq{\t\t<tr>} .
+				($controls ? qq{<td><input type=checkbox name=link value="$id_link">} : "") .
+				($stack ? qq{<td><a href="stack.html?id=$id_stack">$stack</a></td>} : "") .
+				($no_date ? "" : qq{<td>$date</td>}) .
+				qq{<td><a href="$uri" target=_blank>$display</a></td>};
+
 			print qq{<td><a href="$short_uri">$short</a></td>} if(length($short));
 			print qq{</tr>\n};
 			$count++;

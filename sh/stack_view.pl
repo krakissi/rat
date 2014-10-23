@@ -9,7 +9,7 @@ use strict;
 use DBI;
 require KrakratCommon;
 
-my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
+my $dbh = KrakratCommon::get_connection();
 my $user = $ENV{kraknet_user};
 
 # Get QUERY_STRING
@@ -104,8 +104,11 @@ print "</div>\n";
 print "<div id=view>\n";
 
 if($has{read}){
-	print "<h2>$name</h2>\n";
-	print qq{<form action=action.pl method=post id=form_remove>\n<input type=hidden name=op value=link_remove>\n};
+	my $edit_buttons = qq{<input type=button onclick="delete_links();" value="Remove Selected"><input type=reset value="Unselect All">\n};
+
+	print "<h1>$name</h1>\n";
+	print qq{<form action=action.pl method=post id=form_remove name=form_link_remove>\n<input type=hidden name=op value=link_remove>\n};
+	print "$edit_buttons" if($has{write});
 
 	# Dump out the links!
 	my $count = KrakratCommon::getlinks({
@@ -113,7 +116,7 @@ if($has{read}){
 		controls => $has{write}
 	});
 
-	print qq{<input type=submit value="Remove Selected"><input type=reset value="Unselect All"></form>\n} if($has{write});
+	print "</form>\n";
 	print "<h3>This stack has no links.</h3>\n" if(!$count);
 } else {
 	print "<p>You do not have permission to view this stack.</p>";

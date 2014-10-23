@@ -4,7 +4,7 @@ use strict;
 use DBI;
 require KrakratCommon;
 
-my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
+my $dbh = KrakratCommon::get_connection();
 my $user = $ENV{kraknet_user};
 my $perm = $ARGV[0] // 0;
 my %creators;
@@ -34,7 +34,7 @@ while(my ($id, $name, $date, $creator) = $sth->fetchrow_array()){
 	print qq{\t<li><a href="stack.html?id=$id" title="Created by $cname ($date)">$name</a>\n};
 
 	# Display first three links
-	KrakratCommon::getlinks({ id_stack => $id, limit => 3 });
+	KrakratCommon::getlinks({ id_stack => $id, limit => 3, no_date => 1 });
 
 	print qq{\t</li>\n};
 	$count++;

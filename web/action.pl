@@ -14,7 +14,7 @@ my $referer = $ENV{HTTP_REFERER} // "/";
 chomp(my $home = qx/mod_home rat/);
 eval "require '$home/KrakratCommon.pm';";
 
-my $dbh = DBI->connect('dbi:mysql:rat', 'kraknet', '') or die "could not access DB";
+my $dbh = KrakratCommon::get_connection();
 
 # Reject actions from unauthorized users (not logged in).
 chomp(my $user = qx/mod_find accounts:auth/);
