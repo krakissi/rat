@@ -40,7 +40,7 @@ sub get_connection {
 		}
 
 		print qq{<input type=hidden name=stack value="$id_stack">\n} if($controls && $id_stack);
-		print "\t<table>\n";
+		print "\t<table class=links_table>\n";
 		while(my ($id_link, $uri, $short, $meta, $date, $stack, $id_stack) = $sth_getlinks->fetchrow_array()){
 			my $display = (length($meta) > 0) ? $meta : $uri;
 

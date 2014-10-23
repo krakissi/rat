@@ -14,18 +14,26 @@
 
 <div id=view>
 	<!-- Latest links from all stacks. -->
-	<h2>Latest Links</h2>
-	<????rat:metastacks>
+	<div>
+		<h2>Latest Links</h2>
+		<????rat:metastacks>
+	</div>
 
 	<!-- Stacks the user owns. -->
-	<h2>Your Stacks</h2>
-	<????rat:stacks>
+	<div class=stack_list>
+		<h2>Your Stacks</h2>
+		<????rat:stacks>
+	</div>
 
 	<!-- Stacks the user can contribute to. -->
-	<h2>Other Modifiable Stacks</h2>
-	<????rat:stacks 1>
+	<div class=stack_list>
+		<h2>Other Modifiable Stacks</h2>
+		<????rat:stacks 1>
+	</div>
 
 	<!-- Stacks the user can view, but not modify. -->
-	<h2>Read-Only Stacks</h2>
-	<????rat:stacks 2>
+	<div class=stack_list>
+		<h2>Read-Only Stacks</h2>
+		<????rat:stacks 2>
+	</div>
 </div>
