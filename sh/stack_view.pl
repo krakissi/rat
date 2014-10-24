@@ -39,67 +39,69 @@ my $name = KrakratCommon::escape_html($info->{name});
 my $name_quot = KrakratCommon::escape_link($info->{name});
 my $public = $info->{public};
 
-print "<div id=edit_controls>\n";
+if($has{write} or $has{owner}){
+	print "<div id=edit_controls>\n";
 
-# Edit controls, for adding new links.
-if($has{write}){
-	print qq{
-	<div>
-		<form action=action.pl method=post>
-			<input type=hidden name=op value=link_add>
-			<input type=hidden name=stack value="$id_stack">
+	# Edit controls, for adding new links.
+	if($has{write}){
+		print qq{
+		<div>
+			<form action=action.pl method=post>
+				<input type=hidden name=op value=link_add>
+				<input type=hidden name=stack value="$id_stack">
 
-			<label for=link_add_uri>URL</label>
-			<input type=text id=link_add_uri name=uri><br>
+				<label for=link_add_uri>URL</label>
+				<input type=text id=link_add_uri name=uri><br>
 
-			<label for=link_add_meta>Title</label>
-			<input type=text id=link_add_meta name=meta><br>
+				<label for=link_add_meta>Title</label>
+				<input type=text id=link_add_meta name=meta><br>
 
-			<input type=submit value=Push>
-			<input type=reset value=Clear>
-		</form>
-	</div>};
+				<input type=submit value=Push>
+				<input type=reset value=Clear>
+			</form>
+		</div>};
+	}
+
+	if($has{owner}){
+		my $sel_private = ($public ? "" : " selected");
+		my $sel_public = ($public ? " selected" : "");
+
+		print qq{
+		<!-- stack_edit -->
+		<div>
+			<p>You are the owner of this stack.</p>
+			<form action=action.pl method=post>
+				<input type=hidden name=op value=stack_edit>
+				<input type=hidden name=stack value="$id_stack">
+
+				<label for=stack_edit_name>Name</label>
+				<input type=text id=stack_edit_name name=name value="$name_quot"><br>
+
+				<label for=stack_edit_public>Visibility</label>
+				<select id=stack_edit_public name=public>
+					<option value=0$sel_private>Private</option>
+					<option value=1$sel_public>Public</option>
+				</select>
+				<br>
+
+				<input type=submit value="Update Stack">
+			</form>
+		</div>
+
+		<!-- stack_remove -->
+		<div>
+			<form action=action.pl method=post name=form_stack_remove>
+				<input type=hidden name=op value=stack_remove>
+				<input type=hidden name=stack value="$id_stack">
+				<input type=button value="Delete Stack" onclick="delete_stack();">
+			</form>
+		</div>
+		};
+	}
+
+	# End of edit controls.
+	print "</div>\n";
 }
-
-if($has{owner}){
-	my $sel_private = ($public ? "" : " selected");
-	my $sel_public = ($public ? " selected" : "");
-
-	print qq{
-	<!-- stack_edit -->
-	<div>
-		<p>You are the owner of this stack.</p>
-		<form action=action.pl method=post>
-			<input type=hidden name=op value=stack_edit>
-			<input type=hidden name=stack value="$id_stack">
-
-			<label for=stack_edit_name>Name</label>
-			<input type=text id=stack_edit_name name=name value="$name_quot"><br>
-
-			<label for=stack_edit_public>Visibility</label>
-			<select id=stack_edit_public name=public>
-				<option value=0$sel_private>Private</option>
-				<option value=1$sel_public>Public</option>
-			</select>
-			<br>
-
-			<input type=submit value="Update Stack">
-		</form>
-	</div>
-
-	<!-- stack_remove -->
-	<div>
-		<form action=action.pl method=post name=form_stack_remove>
-			<input type=hidden name=op value=stack_remove>
-			<input type=hidden name=stack value="$id_stack">
-			<input type=button value="Delete Stack" onclick="delete_stack();">
-		</form>
-	</div>
-	};
-}
-
-# End of edit controls.
-print "</div>\n";
 
 print "<div id=view>\n";
 
