@@ -2,6 +2,7 @@
 # mperron (2014)
 query=sh/query.pl
 header=sh/header.pl
+loginctl=sh/loginctl.pl
 
 # Landing page utils
 prep=sh/prep.pl

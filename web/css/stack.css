@@ -34,6 +34,15 @@ h2 {
 	color: white;
 	text-decoration: none;
 }
+#sitewideheader #login_ctl {
+	position: absolute;
+	right: 0.5em;
+	top: 0.5em;
+}
+#sitewideheader #login_ctl a {
+	color: white;
+	text-decoration: none;
+}
 
 /* Class for styling the preview lists for stacks on the landing page. */
 div.stack_list {
