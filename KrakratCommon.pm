@@ -179,6 +179,26 @@ sub escape_html {
 	return $link;
 }
 
+# Generic redirect page
+sub do_redirect {
+	my %p = %{@_[0]};
+	my $target = $p{target} // '/';
+
+	my $target_quot = &escape_link($target);
+	my $target_html = &escape_html($target);
+
+	print qq{Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE html>
+<html><head>
+	<title>Redirecting...</title>
+	<meta http-equiv="refresh" content="0;$target_quot">
+</head><body>
+	<p>Redirecting you to <a href="$target_quot">$target_html</a>...</p>
+</body></html>
+	};
+}
+
 
 # Load up for a default of 3 links previewed per stack.
 &getlinks_prepare(3);

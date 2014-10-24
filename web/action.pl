@@ -75,7 +75,7 @@ if($op eq "stack_create"){
 	}
 }
 
-print "Status: 302 Operation\nLocation: $referer\n\n";
+KrakratCommon::do_redirect({ target => $referer });
 exit 0;
 
 # Create a new stack. 1 parameter, the vanity name of the stack.
@@ -289,6 +289,7 @@ sub link_remove {
 }
 
 sub unauthorized {
-	print "Status: 302 Unauthorized\nLocation: $referer\n\n";
+	# Empty redirect will push to /
+	KrakratCommon::do_redirect({});
 	exit 0
 }
