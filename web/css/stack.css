@@ -52,9 +52,26 @@ div.stack_list ul {
 	padding: 0 0 0 0.2em;
 	margin: 0;
 }
-div.stack_list table.links_table {
+div.stack_list ul table.links_table {
 	margin: 0;
 	padding: 0 0 0.5em 1.5em;
+}
+div.stack_list ul li {
+	position: relative;
+}
+div.stack_list ul li:nth-child(even){
+	background-color: #fafafa;
+}
+div.stack_list ul li .createinfo {
+	position: absolute;
+	top: 0.2em;
+	right: 0;
+	text-align: right;
+	font-size: 8px;
+	font-family: monospace;
+}
+div.stack_list ul li .createinfo .author {
+	font-size: 10px;
 }
 
 /* Inline block generic pane class. Other specific IDs may extend it. */

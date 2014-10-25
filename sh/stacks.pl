@@ -20,7 +20,8 @@ my $sql = qq{
 	FROM stack AS s
 	LEFT JOIN userstack AS us ON us.id_stack = s.id_stack
 	LEFT JOIN user AS u ON u.id_user = us.id_user
-	WHERE u.name = ? AND us.permission = ?;
+	WHERE u.name = ? AND us.permission = ?
+	ORDER BY s.name ASC;
 };
 my $sth = $dbh->prepare($sql);
 $sth->execute($user, $perm);
@@ -32,6 +33,7 @@ while(my ($id, $name, $date, $creator) = $sth->fetchrow_array()){
 
 	$name = KrakratCommon::escape_html($name);
 	print qq{\t<li><a href="stack.html?id=$id" title="Created by $cname ($date)">$name</a>\n};
+	print qq{\t<span class=createinfo><span class=date>$date</span><br><span class=author>$cname</span></span>\n};
 
 	# Display first three links
 	KrakratCommon::getlinks({ id_stack => $id, limit => 3, no_date => 1 });
