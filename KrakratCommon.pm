@@ -55,7 +55,7 @@ sub get_connection {
 				($controls ? qq{<td><input type=checkbox name=link value="$id_link">} : "") .
 				($stack ? qq{<td><a href="stack.html?id=$id_stack">$stack</a></td>} : "") .
 				($no_date ? "" : qq{<td>$date</td>}) .
-				qq{<td><a href="$uri" target=_blank>$display</a></td>};
+				qq{<td><a href="$uri" target=_blank id-link="$id_link">$display</a></td>};
 
 			print qq{<td><a href="$short_uri">$short</a></td>} if(length($short));
 			print qq{</tr>\n};
