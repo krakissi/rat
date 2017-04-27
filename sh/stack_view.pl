@@ -53,7 +53,7 @@ if($has{write} or $has{owner}){
 				<label for=link_add_uri>URL</label>
 				<input type=text id=link_add_uri name=uri><br>
 
-				<label for=link_add_meta>Title</label>
+				<label for=link_add_meta>Title (Optional)</label>
 				<input type=text id=link_add_meta name=meta><br>
 
 				<input type=submit value=Push>
