@@ -12,8 +12,7 @@ if(length($user) > 0){
 	# The "inline" renderer won't print HTTP headers.
 	system("kraknet_inline layout/landing.html");
 } else {
-	# TODO login/register util should display here.
-	print "<p>Soon&trade;</p>\n";
+	system("kraknet_inline layout/nouser.html");
 }
 
 exit 0
