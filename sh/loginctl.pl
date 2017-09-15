@@ -11,10 +11,10 @@ chomp(my $authdomain = qx/mod_find accounts:authdomain/);
 
 if(!length($user)){
 	# Login
-	print qq{<a href="//$authdomain/">login</a>};
+	print qq{<a href="//$authdomain/" target=_self>login</a>};
 } else {
 	# Logout
-	print qq{<a href="//$authdomain/logout">logout</a>};
+	print qq{<a href="//$authdomain/logout" target=_self>logout</a>};
 }
 
 exit 0
