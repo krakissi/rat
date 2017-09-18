@@ -86,8 +86,12 @@ div.stack_list ul li .createinfo .author {
 #edit_controls {
 	width: 250px;
 }
-#edit_controls div {
-	padding-bottom: 1em;
+#edit_controls div:nth-child(n + 2){
+	border-top: solid 1px black;
+	padding-top: 1em;
+}
+#edit_controls div p {
+	margin-top: 0;
 }
 #edit_controls form label {
 	font-size: 10px;
