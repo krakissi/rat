@@ -40,7 +40,7 @@ my $name_quot = KrakratCommon::escape_link($info->{name});
 my $public = $info->{public};
 
 if($has{read}){
-	print "<h1 id=stack_name>$name</h1>\n";
+	print "<h1 id=stack_name><a href=stack.html?id=$id_stack>$name</a></h1>\n";
 }
 
 if($has{write} or $has{owner}){
