@@ -1,4 +1,9 @@
 #!/usr/bin/perl
+# search
+# mperron (2017)
+#
+# Searches the database for the logical AND of all space-separated terms in the
+# query string.
 
 use strict;
 use DBI;

@@ -1,4 +1,8 @@
 #!/usr/bin/perl
+# search_form
+# mperron (2017)
+#
+# Generates the HTML form whose action searches for links.
 
 use strict;
 require KrakratCommon;
