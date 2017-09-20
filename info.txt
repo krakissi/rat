@@ -12,3 +12,7 @@ metastacks=sh/metastacks.pl
 
 # Viewing tool
 stack_view=sh/stack_view.pl
+
+# Search
+search=sh/search.pl
+search_form=sh/search_form.pl

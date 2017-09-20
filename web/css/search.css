@@ -1,0 +1,13 @@
+form[name=search] input[type=text] {
+	width: 600px;
+}
+form[name=search] label[for=search_field_q] {
+	display: none;
+}
+form {
+	margin-bottom: 2em;
+}
+
+.search_results {
+	margin: 1em 2.5em;
+}

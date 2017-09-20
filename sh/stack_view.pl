@@ -110,7 +110,7 @@ if($has{write} or $has{owner}){
 print "<div id=view>\n";
 
 if($has{read}){
-	my $edit_buttons = qq{<input type=button onclick="delete_links();" value="Remove Selected"><input type=reset value="Clear Selection"><input type=button onclick="select_all();" value="Select All"><input type=button onclick="open_all();" value="Open Selected">\n};
+	my $edit_buttons = qq{<div class=edit_buttons><input type=button onclick="delete_links();" value="Remove Selected"><input type=reset value="Clear Selection"><input type=button onclick="select_all();" value="Select All"><input type=button onclick="open_all();" value="Open Selected"></div>\n};
 
 	print qq{<form action=action.pl method=post id=form_remove name=form_link_remove>\n<input type=hidden name=op value=link_remove>\n};
 	print "$edit_buttons" if($has{write});
