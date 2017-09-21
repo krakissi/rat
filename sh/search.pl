@@ -7,10 +7,13 @@
 
 use strict;
 use DBI;
+use POSIX;
+use Time::HiRes qw(gettimeofday);
 require KrakratCommon;
 
 my $dbh = KrakratCommon::get_connection();
 my $user = $ENV{kraknet_user};
+my ($time_s_s, $time_s_us) = gettimeofday();
 
 my %queryvals = KrakratCommon::query();
 
@@ -91,10 +94,21 @@ while(my ($stack_name, $id_stack, $meta, $uri, $date) = $sth->fetchrow()){
 
 	$rcount++;
 }
+
+my $time_result = "";
+{
+	my ($time_f_s, $time_f_us) = gettimeofday();
+
+	$time_f_s = ($time_f_s * 1000) + floor($time_f_us / 1000);
+	$time_s_s = ($time_s_s * 1000) + floor($time_s_us / 1000);
+
+	$time_result = " in " . (($time_f_s - $time_s_s) / 1000) . " seconds";
+}
+
 if($rcount > 0){
-	print "</table><p><i>$rcount result" . (($rcount == 1) ? "" : "s") . "</i>.</div>\n";
+	print "</table><p><i>$rcount result" . (($rcount == 1) ? "" : "s") . "$time_result</i>.</div>\n";
 } else {
-	print "<p><i>No results.</i></p>\n";
+	print "<p><i>No results$time_result.</i></p>\n";
 }
 
 exit 0
