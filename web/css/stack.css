@@ -2,11 +2,17 @@ body {
 	padding: 0;
 	margin: 0 2.5em;
 	font-family: serif;
-	background: gray url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAIAAAAW4yFwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QMeDDcYbNv5/QAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAQSURBVAjXYwgOCGBgYGAAAAW9APRNISeEAAAAAElFTkSuQmCC') repeat fixed;
+	background: black url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAIAAAAW4yFwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QMeDDcYbNv5/QAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAQSURBVAjXYwgOCGBgYGAAAAW9APRNISeEAAAAAElFTkSuQmCC') repeat fixed;
 }
 
 a {
 	color: #224022;
+}
+a:hover {
+	color: #808052;
+}
+#view a {
+	font-weight: normal;
 }
 
 div {
@@ -23,6 +29,8 @@ h2 {
 
 #content {
 	background-image: none;
+	background-color: white;
+	color: black;
 	padding-bottom: 5em;
 }
 #content a {
@@ -163,4 +171,8 @@ h1#stack_name {
 
 table tr td:nth-child(n + 2){
 	padding-left: 0.5em;
+}
+
+h1 a {
+	text-shadow: none;
 }
