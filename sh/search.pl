@@ -9,6 +9,7 @@ use strict;
 use DBI;
 use POSIX;
 use Time::HiRes qw(gettimeofday);
+use lib '.';
 require KrakratCommon;
 
 my $dbh = KrakratCommon::get_connection();

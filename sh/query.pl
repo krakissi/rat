@@ -5,6 +5,7 @@
 # Prints the value of an item in the query string.
 
 use strict;
+use lib '.';
 require KrakratCommon;
 
 # Get QUERY_STRING

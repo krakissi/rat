@@ -5,6 +5,7 @@
 # Generates the HTML form whose action searches for links.
 
 use strict;
+use lib '.';
 require KrakratCommon;
 
 my %queryvals = KrakratCommon::query();

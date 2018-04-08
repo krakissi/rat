@@ -6,6 +6,7 @@
 
 use strict;
 use DBI;
+use lib '.';
 require KrakratCommon;
 
 my $user = $ENV{kraknet_user};

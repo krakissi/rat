@@ -7,6 +7,7 @@
 
 use strict;
 use DBI;
+use lib '.';
 require KrakratCommon;
 
 my $dbh = KrakratCommon::get_connection();
