@@ -40,7 +40,14 @@ h2 {
 }
 
 #content {
-	background-image: none;
+	min-width: 850px;
+	max-width: 1400px;
+	padding: 0 0 5em 0;
+	margin: 0 0 5em 0;
+
+	border: 2px solid black;
+	border-top: none;
+
 	background-color: white;
 	color: black;
 	padding-bottom: 5em;

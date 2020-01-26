@@ -32,3 +32,12 @@ tr:nth-child(4n - 1) {
 tr:hover {
 	background-color: #eef;
 }
+
+.search_info {
+	max-width: 650px;
+	padding: 1em 1em 2em 1em;
+	background-color: rgba(0, 0, 0, 0.1);
+	margin: 1.5em 1em;
+	border-radius: 0.4em;
+	position: relative;
+}
