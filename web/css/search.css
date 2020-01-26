@@ -11,3 +11,24 @@ form {
 .search_results {
 	margin: 1em 2.5em;
 }
+table {
+	border-collapse: collapse;
+}
+
+td {
+	padding: 0.3em;
+}
+td.sr_link {
+	max-width: 750px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+tr:nth-child(4n),
+tr:nth-child(4n - 1) {
+	background-color: #eee;
+}
+
+tr:hover {
+	background-color: #eef;
+}

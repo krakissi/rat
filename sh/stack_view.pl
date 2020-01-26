@@ -44,6 +44,8 @@ if($has{read}){
 	print "<h1 id=stack_name><a href=stack.html?id=$id_stack>$name</a></h1>\n";
 }
 
+print "<div id=view>\n";
+
 if($has{write} or $has{owner}){
 	print "<div id=edit_controls>\n";
 
@@ -107,8 +109,6 @@ if($has{write} or $has{owner}){
 	# End of edit controls.
 	print "</div>\n";
 }
-
-print "<div id=view>\n";
 
 if($has{read}){
 	my $edit_buttons = qq{<div class=edit_buttons><input type=button onclick="delete_links();" value="Remove Selected"><input type=reset value="Clear Selection"><input type=button onclick="select_all();" value="Select All"><input type=button onclick="open_all();" value="Open Selected"></div>\n};

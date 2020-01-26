@@ -78,18 +78,17 @@ $sth->execute();
 my $rcount = 0;
 while(my ($stack_name, $id_stack, $meta, $uri, $date) = $sth->fetchrow()){
 	if($rcount == 0){
-		print "<div class=search_results><table>\n"
-			. "<tr><th></th><th>Link</th><th>Date</th><th>Stack</th></tr>\n";
+		print "<div class=search_results><table>\n";
 	}
-	print "<tr><td>"
+	print "<tr><td class=sr_index>"
 		. ($rcount + 1)
-		. ".</td><td><a href=\""
+		. ".</td><td colspan=3 class=sr_link><a href=\""
 		. KrakratCommon::escape_link($uri)
 		. "\">"
 		. KrakratCommon::escape_html((length($meta) > 0) ? $meta : $uri)
-		. "</a></td><td>"
+		. "</a></td></tr><td></td><td class=sr_date>"
 		. KrakratCommon::escape_html($date)
-		. "</td><td><a href=\"stack.html?id=$id_stack\">"
+		. "</td><td class=sr_stack><a href=\"stack.html?id=$id_stack\">"
 		. KrakratCommon::escape_html($stack_name)
 		. "</a></td></tr>\n";
 
