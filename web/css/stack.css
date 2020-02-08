@@ -1,7 +1,8 @@
 body {
 	padding: 0;
-	margin: 0 2.5em;
+	margin: 0;
 	font-family: serif;
+	font-size: 120%;
 	background: black url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAIAAAAW4yFwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QMeDDcYbNv5/QAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAQSURBVAjXYwgOCGBgYGAAAAW9APRNISeEAAAAAElFTkSuQmCC') repeat fixed;
 }
 
@@ -43,7 +44,7 @@ h2 {
 	min-width: 850px;
 	max-width: 1400px;
 	padding: 0 0 5em 0;
-	margin: 0 0 5em 0;
+	margin: 0 auto 5em auto;
 
 	border: 2px solid black;
 	border-top: none;
